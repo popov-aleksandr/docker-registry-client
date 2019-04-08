@@ -42,7 +42,7 @@ func (registry *Registry) getPaginatedJson(url string, response interface{}) (st
 	if err != nil {
 		return "", err
 	}
-	return getNextLink(resp)
+	return registry.getNextLink(resp)
 }
 
 // Matches an RFC 5988 (https://tools.ietf.org/html/rfc5988#section-5)
@@ -55,11 +55,11 @@ func (registry *Registry) getPaginatedJson(url string, response interface{}) (st
 // `rel="next"` may not have quoted values in the wild.
 var nextLinkRE = regexp.MustCompile(`^ *<?([^;>]+)>? *(?:;[^;]*)*; *rel="?next"?(?:;.*)?`)
 
-func getNextLink(resp *http.Response) (string, error) {
+func (registry *Registry) getNextLink(resp *http.Response) (string, error) {
 	for _, link := range resp.Header[http.CanonicalHeaderKey("Link")] {
 		parts := nextLinkRE.FindStringSubmatch(link)
 		if parts != nil {
-			return parts[1], nil
+			return registry.URL + parts[1], nil
 		}
 	}
 	return "", ErrNoMorePages
