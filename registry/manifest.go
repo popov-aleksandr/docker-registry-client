@@ -76,7 +76,7 @@ func (registry *Registry) ManifestDigest(repository, reference string) (digest.D
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	req.Header.Set("Accept", schema2.MediaTypeManifest)
